@@ -1,0 +1,9 @@
+---
+- name: Installing apps on all media servers
+  hosts: mediaservers
+  remote_user: "{{ lookup('env','USER') }}"
+  become: yes
+  gather_facts: true
+  roles:
+    - add-repos
+    - install-mediasrv

@@ -1,0 +1,16 @@
+---
+- name: Copying master.vimrc
+  copy:
+    src: "master.vimrc"
+    dest: "~/.vimrc"
+
+- name: Copying master.bashrc to Debian / Ubuntu systems
+  copy:  
+    src: "master.bashrc"
+    dest: "~/.bashrc"
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' 
+
+- name: Copying master.gitconfig
+  copy:  
+    src: "master.gitconfig"
+    dest: "~/.gitconfig"

@@ -1,0 +1,44 @@
+---
+- name: Setting up home var
+  set_fact:
+    home_dir: "{{ lookup('env', 'HOME') }}"
+
+- name: Install multiple packages for CentOS
+  yum:
+    name:
+      - xrdp
+      - vlc
+      - vim
+      - net-tools
+      - whois
+    state: latest
+    update_cache: true
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'rhel'
+
+- name: Install multiple packages for Ubuntu
+  apt:
+    pkg:
+      - xfce4
+      - xubuntu-desktop
+      - xrdp
+      - vlc
+      - vim
+      - net-tools
+      - whois
+    state: latest
+    #update_cache: true
+    autoremove: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Copy .xsession file for XRDP
+  copy: 
+    src: ".xsession" 
+    dest: '{{ home_dir }}'
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
+    mode: '0755'
+
+- name:  Restart xrdp service
+  ansible.builtin.service:
+    name:  xrdp
+    state:  restarted

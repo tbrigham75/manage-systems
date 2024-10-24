@@ -1,0 +1,44 @@
+---
+- name: Update all installed packages using YUM module
+  yum:
+    name: '*'
+    state: latest
+    update_cache: yes
+    update_only: yes
+  register: yum_update_status
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'rhel' or ansible_distribution == 'Rocky'
+
+
+- name: Remove YUM packages not needed anymore
+  yum:
+    autoremove: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'rhel' or ansible_distribution == 'Rocky'
+
+#- name: Reboot when YUM packages were updated
+#  reboot:
+#  when: yum_update_status.changed
+
+- name: Update all installed packages using APT module
+  apt:
+    name: '*'
+    state: latest
+    update_cache: yes
+    only_upgrade: yes
+  register: apt_update_status
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Remove APT packages not needed anymore
+  apt:
+    autoremove: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+#- name: Reboot when APT packages were updated
+#  reboot:
+#    post_reboot_delay: 60
+#  when: apt_update_status.changed
+
+  #- name: Install all Windows Updates and reboot as many times as needed
+  #ansible.windows.win_updates:
+  #  category_names: '*'
+  #  reboot: yes
+  #when: ansible_os_family == "Windows"

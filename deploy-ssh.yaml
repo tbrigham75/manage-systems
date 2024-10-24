@@ -1,0 +1,10 @@
+---
+#Run this playbook with:
+# ssh-keyscan 192.168.2.160 >> ~/.ssh/known_hosts
+#Intial time run: ansible-playbook deploy-ssh.yaml --ask-pass -K
+- name: Deploying SSH Certs and Configs
+  hosts: rocky
+  gather_facts: false
+  become: yes
+  roles:
+    - deploy-ssh

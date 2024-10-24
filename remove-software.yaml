@@ -1,0 +1,9 @@
+---
+
+- name: Remove Software
+  hosts: ubuntu01
+  gather_facts: false
+  remote_user: "{{ lookup('env','USER') }}"
+  become: yes
+  roles:
+    - remove-software

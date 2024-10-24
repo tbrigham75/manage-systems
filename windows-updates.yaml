@@ -1,0 +1,10 @@
+---
+- name: Updating Windows
+  hosts: windows
+
+  tasks:
+    - name: Install all Windows Updates and reboot as many times as needed
+      ansible.windows.win_updates:
+        category_names: '*'
+        reboot: yes
+      when: ansible_os_family == "Windows"

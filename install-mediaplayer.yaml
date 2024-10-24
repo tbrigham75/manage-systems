@@ -1,0 +1,8 @@
+---
+- name: Installing apps on all media players
+  hosts: mediaplayers
+  remote_user: "{{ lookup('env','USER') }}"
+  become: yes
+  roles:
+    - add-repos
+    - install-mediaplayer

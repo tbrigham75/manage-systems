@@ -1,0 +1,27 @@
+---
+#Run this playbook with:
+#Install first:  apt install sshpass
+#Intial time run: ansible-playbook deploy-ssh.yaml --ask-pass -K
+- name: Setting up home var
+  set_fact:
+    home_dir: "{{ lookup('env', 'HOME') }}"
+    username: "{{ lookup('env','USER') }}"
+
+- name: "Add provisioned user to the sudoers"
+  copy: 
+    content: "{{ username }}  ALL=(ALL)  NOPASSWD: ALL"
+    dest: /etc/sudoers.d/{{ username }}
+
+- name: "Deploy SSH Key"
+  authorized_key: "user={{ username }} key=\"{{ lookup('file', '{{ home_dir }}/.ssh/id_rsa.pub') }}\" state=present"
+  
+#- name: "Disable Password Authentication"
+#  lineinfile: "dest=/etc/ssh/sshd_config regexp='^PasswordAuthentication' line=\"PasswordAuthentication no\" state=present backup=yes"
+#  notify: 
+#    - "restart ssh"
+    
+#- name: "Disable Root Login"
+# lineinfile: "dest=/etc/ssh/sshd_config regexp='^PermitRootLogin' line=\"PermitRootLogin no\" state=present backup=yes"
+
+- name: "Restart ssh"
+  service: "name=sshd state=restarted"

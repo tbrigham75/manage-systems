@@ -1,0 +1,14 @@
+---
+#Intial time run: 
+# ssh-keyscan 192.168.2.160 >> ~/.ssh/known_hosts
+# ansible-playbook deploy-ssh.yaml --ask-pass -K to setup SSH cert and no password
+- import_playbook: add-repos.yaml
+- import_playbook: copy-files.yaml
+- import_playbook: create_user.yaml
+- import_playbook: deploy-ssh.yaml
+- import_playbook: install-apps-all-systems.yaml
+- import_playbook: install-docker.yaml
+- import_playbook: install-mediaplayer.yaml
+- import_playbook: install-mediasrv.yaml
+#- import_playbook: install-minikube
+- import_playbook: updates.yaml

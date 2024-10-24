@@ -1,0 +1,16 @@
+---
+- name: Installing TailScale
+  hosts: linux
+  remote_user: "{{ lookup('env','USER') }}"
+  become: yes
+  roles:
+    - role: artis3n.tailscale
+      vars:
+        # Example pulling the API key from the env vars on the host running Ansible
+        #verbose: true
+        #insecurely_log_authkey: true
+        tailscale_authkey: "tskey-auth-kp9NwM7CNTRL-ZZ1PTMKXEAThYh9pjoUDATxSv7r2Rtgj"
+        tailscale_args: "--ssh"
+
+
+        
