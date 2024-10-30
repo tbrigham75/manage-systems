@@ -1,11 +1,35 @@
 ---
 
+- name: Ensure docker-ce
+  package:
+    name: docker-ce
+    state: latest
+
+- name: Ensure docker-ce-cli
+  package:
+    name: docker-ce-cli
+    state: latest
+
+- name: Ensure containerd.io
+  package:
+    name: containerd.io
+    state: latest
+
 - name: Ensure python3-pip
   package:
     name: python3-pip
     state: latest
 
-- name: Install ansible with PIP
+- name: Install ansible module for docker using PIP
+  pip:
+    name: docker
+
+- name: Install ansible module for docker-compose using PIP
   pip:   
-    name: ansible
-    extra_args: --user
+    name: docker-compose
+
+- name: Ensure docker is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
