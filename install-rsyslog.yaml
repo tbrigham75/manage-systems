@@ -1,0 +1,6 @@
+---
+- name: Installing and setting up rsyslog
+  hosts: linux
+  become: yes
+  roles:
+    - install-rsyslog

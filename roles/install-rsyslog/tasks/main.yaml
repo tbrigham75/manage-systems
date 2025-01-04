@@ -1,0 +1,28 @@
+---
+- name: Install rsyslog
+  package:
+    name: rsyslog
+    state: present
+
+- name: Ensure rsyslog service is enabled and started
+  service:
+    name: rsyslog
+    state: started
+    enabled: yes
+
+- name: Copying 10-custom-dynamic-temp.conf to the main rsyslog server 
+  copy:
+    src: "10-custom-dynamic-temp.conf"
+    dest: "/etc/rsyslog.d/10-custom-dynamic-temp.conf"
+  when: inventory_hostname in groups['rsyslogsrv']
+
+- name: Copying 20-custom-rules.conf to all Linux systems
+  copy:
+    src: "20-custom-rules.conf"
+    dest: "/etc/rsyslog.d/20-custom-rules.conf"
+  when: inventory_hostname in groups['linux']
+
+- name: Restart rsyslog service
+  service:
+    name:  syslog
+    state:  restarted
