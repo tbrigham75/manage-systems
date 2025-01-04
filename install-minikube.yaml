@@ -1,8 +1,0 @@
----
-- name: Installing Docker to Linux
-  hosts: docker
-  remote_user: "{{ lookup('env','USER') }}"
-  become: yes
-  roles:
-    - add-repos
-    - install-docker

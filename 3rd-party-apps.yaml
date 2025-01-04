@@ -1,6 +1,6 @@
 ---
 - name: Installing 3rd Party Apps to Linux
-  hosts: mediactr01 
+  hosts: linux 
   remote_user: "{{ lookup('env','USER') }}"
   become: yes
   roles:

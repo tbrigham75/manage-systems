@@ -1,8 +1,0 @@
----
-- name: Installing Ansible to Linux
-  hosts: localhost
-  remote_user: "{{ lookup('env','USER') }}"
-  become: yes
-  roles:
-    - add-repos
-    - install-ansible
