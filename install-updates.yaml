@@ -1,8 +1,8 @@
 ---
 - name: Running updates for OS's
   hosts: all
-  remote_user: "{{ lookup('env','USER') }}"
+  #remote_user: tom #"{{ lookup('env','USER') }}"
   become: yes
   roles:
-    - updates
+    - install-updates
  

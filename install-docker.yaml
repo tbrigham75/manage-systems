@@ -1,0 +1,8 @@
+---
+- name: Installing docker
+  hosts: docker
+  #remote_user: tom #"{{ lookup('env','USER') }}"
+  become: yes
+  roles:
+    - add-repos
+    - install-docker

@@ -1,0 +1,33 @@
+---
+- name: Install required system packages
+  package:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+    state: latest
+
+- name: Ensure Python3 and pip are installed
+  package:
+    name:
+      - python3
+      - pip
+    state: present
+    
+- name: Install Docker CE
+  package:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: latest
+
+- name: Install Docker Python module using pip with --break-system-packages
+  command: python3 -m pip install docker --break-system-packages
+
+- name: Start and enable Docker service
+  service:
+    name: docker
+    state: started
+    enabled: true

@@ -3,7 +3,7 @@
   hosts: linux
   gather_facts: false
   #Remote User Var:
-  remote_user: "{{ lookup('env','USER') }}"
+  #remote_user: "{{ lookup('env','USER') }}"
   #https://stackoverflow.com/questions/37992256/ansible-become-user-with-variable
   become: yes
   roles:

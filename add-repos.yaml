@@ -1,7 +1,7 @@
 ---
 - name: Adding Repo's for Linux OS's
   hosts: linux
-  remote_user: "{{ lookup('env','USER') }}"
+  #remote_user: "{{ lookup('env','USER') }}"
   become: yes
   roles:
     - add-repos

@@ -1,10 +1,9 @@
 ---
- 
 - name: Enabling EPEL Repository on CentOS
   yum:
     name: epel-release
     state: latest
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'rhel' or ansible_distribution == 'Rocky'
+  when: ansible_distribution in ['CentOS', 'RedHat', 'Rocky']
 
 - name: Enabling VLC Repository on CentOS 7
   yum_repository:
@@ -12,7 +11,7 @@
     description: RPM Fusion for EL 7 - Free - Updates
     baseurl: http://download1.rpmfusion.org/free/el/updates/7/$basearch/
     gpgcheck: no
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'rhel' or ansible_distribution == 'Rocky'
+  when: ansible_distribution in ['CentOS', 'RedHat', 'Rocky']
 
 - name: Enable Docker Repository on CentOS
   yum_repository:
@@ -20,28 +19,48 @@
     description: RPM Fusion for Docker
     baseurl: https://download.docker.com/linux/centos/$releasever/$basearch/stable
     gpgcheck: no
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'rhel' or ansible_distribution == 'Rocky'
+  when: ansible_distribution in ['CentOS', 'RedHat', 'Rocky']
 
-- name:  Add Docker GPG key for Debian or Ubuntu
-  apt_key:
-    url:  https://download.docker.com/linux/ubuntu/gpg
+- name: Ensure required packages are installed for Debian or Ubuntu
+  apt:
+    name: 
+      - gnupg2
+      - ca-certificates
+      - curl
     state: present
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution in ['Debian', 'Ubuntu']
 
-- name:  Add Docker Repo for Debian or Ubuntu
+- name: Download Docker GPG key for Debian or Ubuntu
+  get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /usr/share/keyrings/docker-archive-keyring.gpg
+  when: ansible_distribution in ['Debian', 'Ubuntu']
+
+- name: Add Docker repository for Ubuntu
   apt_repository:
-    repo: deb https://download.docker.com/linux/ubuntu/ focal stable
+    repo: "deb [arch={{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
     state: present
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Ubuntu'
 
-- name: Adding Plex Apt signing key on Debian based Media Server
-  apt_key:
+- name: Add Docker repository for Debian
+  apt_repository:
+    repo: "deb [arch={{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+    state: present
+  when: ansible_distribution == 'Debian'
+
+- name: Download Plex GPG key on Debian based Media Server
+  get_url:
     url: https://downloads.plex.tv/plex-keys/PlexSign.key
-    state: present 
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+    dest: /usr/share/keyrings/plex-archive-keyring.gpg
+  when: ansible_distribution in ['Debian', 'Ubuntu']
 
-- name: Enabling Plex Repository on  Debian based Media Server
+- name: Enabling Plex Repository on Debian based Media Server
   apt_repository:
-    repo: "deb https://downloads.plex.tv/repo/deb public main"
+    repo: "deb [signed-by=/usr/share/keyrings/plex-archive-keyring.gpg] https://downloads.plex.tv/repo/deb public main"
     state: present
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution in ['Debian', 'Ubuntu']
+
+#- name: Final update of apt cache
+#  apt:
+#    update_cache: yes
+#  when: ansible_distribution in ['Debian', 'Ubuntu']

@@ -1,7 +1,7 @@
 ---
 - name: Installing apps on all linux systems
   hosts: linux
-  remote_user: "{{ lookup('env','USER') }}"
+  #remote_user: tom #"{{ lookup('env','USER') }}"
   become: yes
   roles:
     - install-apps-all-systems
