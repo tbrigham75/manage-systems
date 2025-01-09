@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# Function to search and delete Zone.Identifier files
-delete_zone_identifier() {
-    local dir="$1"
-    find "$dir" -type f -name '*Zone.Identifier' -delete
-    echo "Deleted Zone.Identifier files in $dir"
-}
-
 # Check if a directory is provided as an argument
 if [ $# -eq 0 ]; then
     echo "Please provide a directory path as an argument."
@@ -22,12 +15,14 @@ if [ ! -d "$main_dir" ]; then
     exit 1
 fi
 
-# Loop through each subdirectory
-for subdir in "$main_dir"/*/ ; do
-    if [ -d "$subdir" ]; then
-        delete_zone_identifier "$subdir"
-    fi
-done
+# Counter for deleted files
+deleted_count=0
 
-echo "Finished searching and deleting Zone.Identifier files."
+# Use find to locate files ending with :Zone.Identifier
+while IFS= read -r -d '' file; do
+    echo "Deleting: $file"
+    rm "$file"
+    ((deleted_count++))
+done < <(find "$main_dir" -type f -name '*:Zone.Identifier' -print0)
 
+echo "Finished deleting $deleted_count Zone.Identifier file(s) in $main_dir and its subdirectories."

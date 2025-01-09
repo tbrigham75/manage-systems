@@ -7,6 +7,13 @@
     home_dir: "{{ lookup('env', 'HOME') }}"
     username: "{{ lookup('env','USER') }}"
 
+- name: Ensure sudo is installed - mainly for proxmox
+  package:
+    name:
+      - sudo
+    state: latest
+    update_cache: true
+
 - name: "Add provisioned user to the sudoers"
   copy: 
     content: "{{ username }}  ALL=(ALL)  NOPASSWD: ALL"

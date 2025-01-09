@@ -9,23 +9,23 @@
     password: '{{ provision_password }}'
     update_password: on_create #Only on create of user it sets the passwd
 
-- name: Add Alex Admin User
-  user:
-    state: present
-    shell: /bin/bash
-    name: adbautista #Username
-    password: '{{ provision_password }}'
-    update_password: on_create #Only on create of user it sets the passwd
+# - name: Add Alex Admin User
+#   user:
+#     state: present
+#     shell: /bin/bash
+#     name: adbautista #Username
+#     password: '{{ provision_password }}'
+#     update_password: on_create #Only on create of user it sets the passwd
 
 - name: Setup sudo for tom account
   copy:
     dest: /etc/sudoers.d/tom
     content: "tom ALL=(root) NOPASSWD: ALL"
 
-- name: Setup sudo for Alex account
-  copy:
-    dest: /etc/sudoers.d/adbautista
-    content: "adbautista ALL=(root) NOPASSWD: ALL"
+# - name: Setup sudo for Alex account
+#   copy:
+#     dest: /etc/sudoers.d/adbautista
+#     content: "adbautista ALL=(root) NOPASSWD: ALL"
 
 - name:  Restart sshd service
   service:
