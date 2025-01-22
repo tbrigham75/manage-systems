@@ -1,0 +1,21 @@
+---
+- name: Ensure resolv.conf exists
+  ansible.builtin.file:
+    path: /etc/resolv.conf
+    state: touch
+    mode: '0644'
+
+- name: Update resolv.conf with new DNS servers
+  ansible.builtin.lineinfile:
+    path: /etc/resolv.conf
+    regexp: '^nameserver'
+    line: "nameserver {{ item }}"
+  loop: "{{ dns_servers }}"
+  notify: Restart networking service
+
+# - name: Remove old nameserver entries
+#   ansible.builtin.lineinfile:
+#     path: /etc/resolv.conf
+#     regexp: '^nameserver(?!\ ({{ dns_servers | join("|") }}))'
+#     state: absent
+#   notify: Restart networking service

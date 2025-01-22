@@ -1,0 +1,6 @@
+---
+- name: Install collections from requirements file
+  ansible.builtin.command:
+    cmd: ansible-galaxy collection install -r "{{ role_path }}/files/install-freeipa-requirements.yaml"
+  register: install_result
+  changed_when: "'Installing' in install_result.stdout"

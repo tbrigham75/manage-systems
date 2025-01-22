@@ -1,0 +1,6 @@
+---
+- name: Restart networking service
+  ansible.builtin.service:
+    name: "{{ networking_service }}"
+    state: restarted
+  when: networking_service is defined

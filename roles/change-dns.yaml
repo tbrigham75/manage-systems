@@ -1,0 +1,9 @@
+---
+- hosts: ipaserver
+  become: yes
+  vars:
+    dns_servers:
+      - "192.168.0.5"
+    networking_service: NetworkManager  # Adjust based on your system
+  roles:
+    - change-dns

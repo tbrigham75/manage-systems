@@ -1,0 +1,13 @@
+---
+- name: Install Ansible collections
+  hosts: localhost
+  connection: local
+  roles:
+    - install-ansible-collections
+
+- name: Installing FreeIPA
+  hosts: ipaserver
+  become: yes
+  roles:
+    - install-requirements-freeipa
+    - freeipa.ansible_freeipa.ipaserver

@@ -1,0 +1,44 @@
+---
+# Right now you can only install FreeIPA on rhel based Linux
+- name: Install EPEL repository on Rocky Linux
+  ansible.builtin.yum:
+    name: epel-release
+    state: present
+  when: ansible_distribution in ['CentOS', 'RedHat', 'Rocky', 'AlmaLinux']
+
+- name: Change hostname on freeipa server
+  ansible.builtin.hostname:
+    name: "{{ ipaserver_hostname }}"
+
+- name: Ensure firewalld is running
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: Open required TCP ports
+  ansible.posix.firewalld:
+    port: "{{ item }}/tcp"
+    permanent: true
+    state: enabled
+  loop:
+    - 80
+    - 443
+    - 389
+    - 636
+    - 88
+    - 464
+    - 53
+  notify: Reload firewalld
+
+- name: Open required UDP ports
+  ansible.posix.firewalld:
+    port: "{{ item }}/udp"
+    permanent: true
+    state: enabled
+  loop:
+    - 88
+    - 464
+    - 53
+    - 123
+  notify: Reload firewalld
