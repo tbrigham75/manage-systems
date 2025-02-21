@@ -5,8 +5,14 @@
       - apt-transport-https
       - ca-certificates
       - curl
+    state: latest
+
+- name: Install software-properties-common on Debian and Ubuntu
+  package:
+    name:
       - software-properties-common
     state: latest
+  when: ansible_distribution in ['Debian', 'Ubuntu']
 
 - name: Ensure Python3 and pip are installed
   package:
@@ -23,11 +29,20 @@
       - containerd.io
     state: latest
 
-- name: Install Docker Python module using pip with --break-system-packages
-  command: python3 -m pip install docker --break-system-packages
+- name: Install Docker Python module using pip
+  command: python3 -m pip install docker
 
 - name: Start and enable Docker service
   service:
     name: docker
     state: started
     enabled: true
+    
+- name: Setting up user var
+  set_fact:
+    username: "{{ lookup('env','USER') }}"
+
+- name: Add current user to the Docker group
+  user:
+    name: "{{ username }}"
+    groups: docker
