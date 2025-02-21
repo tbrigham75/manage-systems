@@ -1,0 +1,14 @@
+---
+users:
+  - name: Fred
+    uid: 1001
+    home: /home/{{ name }}
+    shell: /bin/bash
+    ssh_key: "Put key here"
+
+  - name: Barney
+    uid: 1002
+    home: /home/{{ name }}
+    shell: /bin/bash
+    ssh_key: "Put key here"
+

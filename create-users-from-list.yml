@@ -1,0 +1,6 @@
+---
+- name: Create user accounts from a list
+  hosts: linux
+  become: yes
+  roles:
+  - create-users-from-list
