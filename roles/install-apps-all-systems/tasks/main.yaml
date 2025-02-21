@@ -6,34 +6,35 @@
 - name: Install multiple packages for all distros of linux
   package:
     name:
-      - xrdp
-      - vlc
+      #- xrdp
+      #- vlc
       - vim
       - net-tools
       - whois
+      #- nfs-common #Only for debian based on RHEL based its nfs-utils
     state: latest
     update_cache: true
   #when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: Install multiple packages for Ubuntu
-  package:
-    name:
-      - xfce4
-      #- xubuntu-desktop
-    state: latest
-    update_cache: true
-    autoremove: yes
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+# - name: Install multiple packages for Ubuntu
+#   package:
+#     name:
+#       - xfce4
+#       #- xubuntu-desktop
+#     state: latest
+#     update_cache: true
+#     autoremove: yes
+#   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: Copy .xsession file for XRDP
-  copy: 
-    src: ".xsession" 
-    dest: '{{ home_dir }}'
-    owner: '{{ ansible_user }}'
-    group: '{{ ansible_user }}'
-    mode: '0755'
+# - name: Copy .xsession file for XRDP
+#   copy: 
+#     src: ".xsession" 
+#     dest: '{{ home_dir }}'
+#     owner: '{{ ansible_user }}'
+#     group: '{{ ansible_user }}'
+#     mode: '0755'
 
-- name:  Restart xrdp service
-  ansible.builtin.service:
-    name:  xrdp
-    state:  restarted
+# - name:  Restart xrdp service
+#   ansible.builtin.service:
+#     name:  xrdp
+#     state:  restarted

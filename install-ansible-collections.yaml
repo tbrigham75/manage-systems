@@ -1,0 +1,8 @@
+---
+- name: Install Ansible collections
+  hosts: localhost
+  connection: local
+  #remote_user: tom #"{{ lookup('env','USER') }}"
+  #become: yes
+  roles:
+    - install-ansible-collections

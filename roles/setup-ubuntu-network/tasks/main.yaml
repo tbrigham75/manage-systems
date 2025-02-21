@@ -1,0 +1,22 @@
+---
+
+- name: Create Netplan configuration file
+  copy:
+    content: |
+      network:
+        version: 2
+        renderer: networkd
+        ethernets:
+          {{ interface_name }}:
+            dhcp4: no
+            addresses: [{{ static_ip }}]
+            gateway4: {{ gateway }}
+            nameservers:
+              addresses: {{ dns_servers }}
+    dest: /etc/netplan/01-netcfg.yaml
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Apply Netplan configuration
+  command: netplan apply

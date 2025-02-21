@@ -1,0 +1,7 @@
+---
+interface_name: "eth0"
+static_ip: "192.168.2.170/24"
+gateway: "192.168.2.1"
+dns_servers:
+  - "192.168.2.140"
+new_hostname: "freeipa01"

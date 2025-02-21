@@ -1,0 +1,7 @@
+---
+- name: Configure static IP using Netplan
+  hosts: target_server_2_ip
+  become: yes
+  gather_facts: true
+  roles:
+    - setup-ubuntu-network

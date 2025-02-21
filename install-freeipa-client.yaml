@@ -1,0 +1,8 @@
+---
+- name: Install FreeIPA Client
+  hosts: ipaclients
+  gather_facts: yes
+  become: true
+  roles:
+    - freeipa.ansible_freeipa.ipaclient
+    - install-freeipa-client

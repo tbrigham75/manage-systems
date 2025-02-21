@@ -1,0 +1,10 @@
+---
+- name: Install Ansible collections from requirements file
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Install collections from requirements file
+      ansible.builtin.command:
+        cmd: ansible-galaxy collection install -r install-freeipa-requirements.yaml
+      register: install_result
+      changed_when: "'Installing' in install_result.stdout"

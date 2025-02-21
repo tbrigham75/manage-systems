@@ -1,0 +1,19 @@
+---
+- name: Get hostname and append domain
+  set_fact:
+    full_hostname: "{{ ansible_hostname }}.{{ ipaclient_domain }}"
+
+- name: Set new hostname
+  hostname:
+    name: "{{ full_hostname }}"
+
+- name: Update /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    regexp: '^127\.0\.1\.1'
+    line: "127.0.1.1 {{ full_hostname }} {{ ansible_hostname }}"
+    state: present
+
+- name: Verify new hostname
+  command: hostname
+  register: new_hostname

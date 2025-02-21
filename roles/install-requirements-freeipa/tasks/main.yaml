@@ -1,6 +1,6 @@
 ---
 # Right now you can only install FreeIPA on rhel based Linux
-- name: Install EPEL repository on Rocky Linux
+- name: Install EPEL repository on RHEL based systems
   ansible.builtin.yum:
     name: epel-release
     state: present
