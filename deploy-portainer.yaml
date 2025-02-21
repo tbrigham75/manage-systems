@@ -1,0 +1,7 @@
+---
+- name: Deploying Portainer on Docker Servers
+  hosts: docker
+  gather_facts: false
+  become: yes
+  roles:
+    - deploy-portainer
