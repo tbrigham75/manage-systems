@@ -1,15 +1,11 @@
 ---
-- name: Remove any existing Portainer containers and volumes
-  docker_container:
-    name: portainer
-
 - name: Install portainer
   become: true
   community.docker.docker_container:
     name: "{{ portainer_name }}"
     state: started
     container_default_behavior: no_defaults
-    image: portainer-docker-extension:2.27.0
+    image: "{{ portainer_image }}"
     restart_policy: always
     ports:
       - "{{ portainer_external_port }}:9443"
