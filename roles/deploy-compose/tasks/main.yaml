@@ -16,27 +16,27 @@
     state: started
     enabled: true
 
-- name: Setup phpipam directory
+- name: Setup ittools directory
   vars:
     volume_name: "{{ home_dir }}/docker-compose"
   ansible.builtin.file:
-    path: "{{ volume_name }}/phpipam"
+    path: "{{ volume_name }}/ittools"
     state: directory
     mode: '0755'  # Optional file permissions
     owner: "{{ username }}"  # Optional ownership
     group: "{{ username }}"  # Optional group ownership
 
-- name: Deploy phpipam using Docker Compose
+- name: Deploy ittools using Docker Compose
   vars:
     volume_name: "{{ home_dir }}/docker-compose"
   ansible.builtin.template:
-    src: "templates/docker_compose_phpipam.yaml.j2"
-    dest: "{{ volume_name }}/phpipam/docker-compose.yaml"
+    src: "docker_compose_ittools.yaml.j2"
+    dest: "{{ volume_name }}/ittools/docker-compose.yaml"
     mode: '0755'  # Optional file permissions
     owner: "{{ username }}"   # Optional ownership
     group: "{{ username }}"   # Optional group ownership
   notify:
-    - Start phpipam
+    - Start ittools
 
 # - name: Run phpipam docker-compose up
 #   vars:
@@ -45,20 +45,109 @@
 #     project_src: "{{ volume_name }}/phpipam"
 #     state: present
 
-- name: Create stack via Portainer API
+- name: "{{ stack_name }} Authenticate with Portainer API"
   uri:
-    url: "{{ portainer_url }}/api/stacks"
+    url: "https://{{ portainer_host }}/api/auth"
     method: POST
     headers:
-      X-API-Key: "{{ portainer_api_key }}"
-    body: |
-      {
-        "Name": "{{ stack_name }}",
-        "Compose": "{{ lookup('file', compose_file) }}",
-        "Environment": {},
-        "EndpointId": 1
-      }
+      Content-Type: "application/json"
     body_format: json
+    body:
+      username: "{{ admin_user }}"
+      password: "{{ admin_password }}"
     validate_certs: no
-    status_code: 201
-  register: stack_response
+  register: auth_response
+  changed_when: false
+
+- name: Set auth token
+  set_fact:
+    auth_token: "{{ auth_response.json.jwt }}"
+  when: "auth_response.status == 200"
+
+- name: "{{ stack_name }} Check authentication response"
+  fail:
+    msg: "Failed to authenticate with Portainer API. Status: {{ auth_response.status }}, Message: {{ auth_response.json.message | default('Unknown error') }}"
+  when: "auth_response.status != 200"
+
+- name: "{{ stack_name }} Get Portainer stacks"
+  uri:
+    url: "https://{{ portainer_host }}/api/stacks"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ auth_token }}"
+    validate_certs: no
+  register: stacks_response
+  when: "auth_response.status == 200"
+
+
+- name: "{{ stack_name }} Get JWT token from authentication response"
+  set_fact:
+    jwt_token: "{{ auth_response.json.jwt }}"
+  when: auth_response.status == 200
+
+
+# - name: "{{ stack_name }} Get stack information from Portainer"
+#   uri:
+#     url: "{{ portainer_host }}/api/stacks"
+#     method: GET
+#     headers:
+#       Authorization: "Bearer {{ jwt_token }}"
+#   register: get_stack_response
+#   when: jwt_token is defined
+
+
+- name: "{{ stack_name }} Debug get_stack_response"
+  debug:
+    var: get_stack_response
+
+
+# - name: Install community.general collection
+#   ansible.builtin.command:
+#     cmd: ansible-galaxy collection install community.general
+#   register: install_result
+#   changed_when: "'was installed successfully' in install_result.stdout"
+#   #when: inventory_hostname == 'localhost'
+
+- name: "{{ stack_name }} Check if the stack exists"
+  set_fact:
+    stack_not_exists: "{{ response_data | json_query('[?Name == `'+ stack_name +'`]') | length <= 0 }}"
+  vars:
+    response_data: "{{ get_stack_response.json }}"  
+
+- name: "{{ stack_name }} Create a stack in Portainer"
+  uri:
+    url: "{{ portainer_host }}/api/stacks/create/standalone/string?endpointId={{ endpoint_id }}"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+      Authorization: "Bearer {{ jwt_token }}"
+    body_format: json
+    body:
+      name: "{{ stack_name }}"
+      fromAppTemplate: false
+      StackFileContent: "{{ stack_compose }}"
+  register: create_stack_response
+  when: jwt_token is defined and stack_not_exists
+
+- name: "{{ stack_name }} Check stack creation response"
+  fail:
+    msg: "Failed to create stack in Portainer"
+  when: stack_not_exists and create_stack_response.status != 200 
+
+# - name: Create stack via Portainer API
+#   uri:
+#     url: "{{ portainer_url }}/api/stacks"
+#     method: POST
+#     headers:
+#       X-API-Key: "{{ portainer_api_key }}"
+#     body: |
+#       {
+#         "Name": "{{ stack_name }}",
+#         "Compose": "{{ lookup('file', compose_file) }}",
+#         "Environment": {},
+#         "EndpointId": 1
+#       }
+#     body_format: json
+#     validate_certs: no
+#     status_code: 201
+#   register: stack_response

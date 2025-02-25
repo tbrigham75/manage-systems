@@ -3,7 +3,7 @@
   set_fact:
     home_dir: "{{ lookup('env', 'HOME') }}"
 
-- name: Start phpipam
+- name: Start ittools
   vars:
     volume_name: "{{ home_dir }}/docker-compose"
   community.docker.docker_compose_v2:

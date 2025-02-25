@@ -1,6 +1,9 @@
 ---
-url: https://github.com/docker/compose/releases/download/v2.33.1/docker-compose-linux-x86_64
-portainer_url: "https://portainer.example.com"
-portainer_api_key: "your_api_key_here"
-compose_file: "docker-compose.yml"
-stack_name: "my_stack"
+# url: https://github.com/docker/compose/releases/download/v2.33.1/docker-compose-linux-x86_64
+portainer_host: iphere:9443
+portainer_api_key: portainerkeyhere
+compose_file: "~/docker-compose/ittools/docker-compose.yaml"
+stack_name: ittools
+admin_user: tom
+admin_password: passhere
+#portainer_endpoint_id: "2"
