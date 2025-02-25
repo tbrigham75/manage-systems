@@ -1,0 +1,7 @@
+---
+- name: Deploying Compose files on Docker Servers
+  hosts: docker
+  gather_facts: true
+  become: yes
+  roles:
+    - deploy-compose

@@ -1,0 +1,64 @@
+---
+- name: Setting up home var, username
+  set_fact:
+    home_dir: "{{ lookup('env', 'HOME') }}"
+    username: "{{ lookup('env','USER') }}"
+
+# - name: Ensure docker-compose is installed
+#   get_url:
+#     url: "{{ url }}"
+#     dest: /usr/local/bin/docker-compose
+#     mode: '755'
+
+- name: Ensure Docker service is running
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Setup phpipam directory
+  vars:
+    volume_name: "{{ home_dir }}/docker-compose"
+  ansible.builtin.file:
+    path: "{{ volume_name }}/phpipam"
+    state: directory
+    mode: '0755'  # Optional file permissions
+    owner: "{{ username }}"  # Optional ownership
+    group: "{{ username }}"  # Optional group ownership
+
+- name: Deploy phpipam using Docker Compose
+  vars:
+    volume_name: "{{ home_dir }}/docker-compose"
+  ansible.builtin.template:
+    src: "templates/docker_compose_phpipam.yaml.j2"
+    dest: "{{ volume_name }}/phpipam/docker-compose.yaml"
+    mode: '0755'  # Optional file permissions
+    owner: "{{ username }}"   # Optional ownership
+    group: "{{ username }}"   # Optional group ownership
+  notify:
+    - Start phpipam
+
+# - name: Run phpipam docker-compose up
+#   vars:
+#     volume_name: "{{ home_dir }}/docker-compose"
+#   community.docker.docker_compose_v2:
+#     project_src: "{{ volume_name }}/phpipam"
+#     state: present
+
+- name: Create stack via Portainer API
+  uri:
+    url: "{{ portainer_url }}/api/stacks"
+    method: POST
+    headers:
+      X-API-Key: "{{ portainer_api_key }}"
+    body: |
+      {
+        "Name": "{{ stack_name }}",
+        "Compose": "{{ lookup('file', compose_file) }}",
+        "Environment": {},
+        "EndpointId": 1
+      }
+    body_format: json
+    validate_certs: no
+    status_code: 201
+  register: stack_response

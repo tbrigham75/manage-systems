@@ -1,0 +1,12 @@
+---
+- name: Setting up home var
+  set_fact:
+    home_dir: "{{ lookup('env', 'HOME') }}"
+
+- name: Start phpipam
+  vars:
+    volume_name: "{{ home_dir }}/docker-compose"
+  community.docker.docker_compose_v2:
+    project_src: "{{ volume_name }}/phpipam"
+    state: present
+    restarted: true
