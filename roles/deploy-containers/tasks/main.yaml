@@ -1,4 +1,9 @@
 ---
+- name: Setting up home var, username
+  set_fact:
+    home_dir: "{{ lookup('env', 'HOME') }}"
+    username: "{{ lookup('env','USER') }}"
+
 - name: Install portainer
   become: true
   community.docker.docker_container:
@@ -11,4 +16,20 @@
       - "{{ portainer_external_port }}:9443"
     volumes:
       - "{{ portainer_volume_name }}:/data"
+      - /var/run/docker.sock:/var/run/docker.sock
+
+- name: Install Homarr
+  become: true
+  vars:
+    volume_name: "{{ home_dir }}/dockervolumes"
+  community.docker.docker_container:
+    name: Homarr
+    state: started
+    container_default_behavior: no_defaults
+    image: homarr/homarr
+    restart_policy: always
+    ports:
+      - "7575:7575"
+    volumes:
+      - "{{ volume_name }}/homarr/:/data"
       - /var/run/docker.sock:/var/run/docker.sock
