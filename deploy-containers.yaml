@@ -1,0 +1,7 @@
+---
+- name: Deploying Containers on Docker Servers
+  hosts: docker
+  gather_facts: false
+  become: yes
+  roles:
+    - deploy-containers
