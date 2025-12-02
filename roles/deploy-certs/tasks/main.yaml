@@ -1,0 +1,14 @@
+---
+- name: Ensure ca-certificates package is installed
+  apt:
+    name: ca-certificates
+    state: present
+    update_cache: yes
+
+- name: Copy CA certificates
+  copy:
+    src: "{{ item }}"
+    dest: "/usr/local/share/ca-certificates/{{ item }}"
+    mode: '0644'
+  loop: "{{ ca_cert_files }}"
+  notify: Update CA certificates
