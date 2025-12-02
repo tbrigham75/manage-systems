@@ -29,8 +29,11 @@
       - containerd.io
     state: latest
 
-- name: Install Docker Python module using pip
-  command: python3 -m pip install docker
+- name: Install python3-docker system package
+  apt:
+    name: python3-docker
+    state: present
+    update_cache: yes
 
 - name: Start and enable Docker service
   service:
