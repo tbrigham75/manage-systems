@@ -1,0 +1,7 @@
+---
+- name: Deploy Certs to Linux
+  hosts: linux
+  become: yes
+  gather_facts: false
+  roles:
+    - deploy-certs

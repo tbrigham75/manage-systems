@@ -1,0 +1,27 @@
+---
+- name: Copying MITRE_BA_NPE_CA-3.crt
+  copy:
+    src: "MITRE_BA_NPE_CA-3.crt"
+    dest: "/usr/local/share/ca-certificates/"
+    mode: '0644'
+
+- name: Copying MITRE_BA_ROOT.crt
+  copy:  
+    src: "MITRE_BA_ROOT.crt"
+    dest: "/usr/local/share/ca-certificates/"
+    mode: '0644'
+
+- name: Copying ZScaler_Root.crt
+  copy:  
+    src: "ZScaler_Root.crt"
+    dest: "/usr/local/share/ca-certificates/"
+    mode: '0644'
+
+- name: Install ca-certificates package
+  apt:
+    name: ca-certificates
+    state: present
+    update_cache: yes
+
+- name: Update CA certificates
+  command: update-ca-certificates
